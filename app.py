@@ -524,6 +524,7 @@ def main():
         st.session_state.last_update = None
         st.session_state.auto_refresh_counter = 0
         st.session_state.last_train_time = None
+        st.session_state.rerun_counter = 0
     
     # Sidebar
     with st.sidebar:
@@ -604,6 +605,9 @@ def main():
     
     # Perform training if needed
     if should_train:
+        # Reset the rerun counter when training happens to prevent duplicate messages
+        st.session_state.rerun_counter = 0
+        
         with st.spinner(f"Training AI model at {datetime.now().strftime('%H:%M:%S')}..."):
             # Initialize or reuse predictor
             if st.session_state.predictor is None or st.session_state.predictor.symbol != AutoRefreshStockPredictor.format_nse_symbol(symbol):
@@ -669,7 +673,7 @@ def main():
                 # fig = plot_chart(df_with_indicators, symbol)
                 # st.plotly_chart(fig, width='stretch')
                 
-                # Auto-refresh countdown
+                # Auto-refresh countdown - Only show if auto_refresh is enabled
                 if auto_refresh and st.session_state.get('model_trained', False):
                     time_since_update = time.time() - st.session_state.last_train_time
                     time_left = max(0, refresh_interval - time_since_update)
@@ -681,15 +685,14 @@ def main():
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    # Auto-refresh using rerun
-                    if time_left <= 1:
+                    # Auto-refresh using rerun - only rerun once
+                    if time_left <= 1 and st.session_state.rerun_counter == 0:
+                        st.session_state.rerun_counter = 1
                         time.sleep(0.5)
                         st.rerun()
-                    else:
-                        # Set a timer to rerun
-                        import time as time_module
-                        time_module.sleep(1)
-                        st.rerun()
+                    elif time_left > 1 and st.session_state.rerun_counter > 0:
+                        # Reset rerun counter when we're not at the refresh point
+                        st.session_state.rerun_counter = 0
                 
                 # Additional details in expander
                 with st.expander("📊 Model Performance & History"):

@@ -535,7 +535,7 @@ def main():
         period = st.selectbox("Data Period", ['1d', '5d', '1mo', '3mo'], index=1)        
         
         # Manual train button
-        manual_train = st.button("🚀 Train Model Now", width='stretch')
+        manual_train = st.button("🚀 Get Recommendation", width='stretch')
 
         # Auto-refresh controls
         st.markdown("## 🔄 Auto-Refresh Settings")
@@ -741,7 +741,7 @@ def main():
                         st.plotly_chart(fig_imp, width='stretch')
     
     elif not st.session_state.get('model_trained', False):
-        st.info("👈 Click 'Train Model Now' or enable auto-refresh to start receiving AI predictions")
+        st.info("👈 Click 'Get Recommendation' or enable auto-refresh to start receiving AI predictions")
         
         # Example of what to expect
         st.markdown("""

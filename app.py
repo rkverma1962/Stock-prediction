@@ -1,7 +1,3 @@
-# pip install streamlit yfinance pandas numpy plotly ta scikit-learn textblob
-
-# nse_stock_prediction_app_fixed.py
-
 import streamlit as st
 import pandas as pd
 import numpy as np
